@@ -15,4 +15,8 @@ hs_err_pid*
 
 # intelliJ Idea
 .idea
+*.iws
 *.iml
+*.ipr
+# intelliJ build folder
+out/
