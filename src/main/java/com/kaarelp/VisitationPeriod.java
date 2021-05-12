@@ -41,7 +41,7 @@ public class VisitationPeriod {
     }
 
     private boolean isToTheRight(VisitationPeriod other) {
-        return this.endingMinute - other.getStartingMinute() == 1;
+        return other.getStartingMinute() - this.endingMinute == 1;
     }
 
     public boolean add(VisitationPeriod other) {
@@ -65,11 +65,11 @@ public class VisitationPeriod {
                 '}';
     }
 
-    private String getStartingMinuteIn24hFormat() {
+    public String getStartingMinuteIn24hFormat() {
         return startingMinute / 60 + ":" + startingMinute % 60;
     }
 
-    private String getEndingMinuteIn24hFormat() {
+    public String getEndingMinuteIn24hFormat() {
         return endingMinute / 60 + ":" + endingMinute % 60;
     }
 }
