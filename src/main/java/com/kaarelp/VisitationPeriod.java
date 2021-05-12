@@ -70,6 +70,14 @@ public class VisitationPeriod {
     }
 
     public String getEndingMinuteIn24hFormat() {
-        return String.format("%02d", endingMinute / 60) + ":" + String.format("%02d", endingMinute % 60);
+        /* +1 is added to the minute because if we have a visitation 00:00,00:01 then it is a visitation
+            lasting one minute. Internally this single minute occupies index 0 and it's startingMinute == 0 and
+            endingMinute == 0 and otherwise human readable format would come out 00:00,00:00. */
+        if (endingMinute % 60 == 59) { /* this handles minute overflow so in case ending is at the 59-th minute
+                                          it wouldn't print 05:60 */
+            return String.format("%02d", endingMinute / 60 + 1) + ":00";
+        } else {
+            return String.format("%02d", endingMinute / 60) + ":" + String.format("%02d", endingMinute % 60 + 1);
+        }
     }
 }
