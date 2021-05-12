@@ -12,9 +12,9 @@ public class MuseumVisitors {
         MuseumVisitors museumVisitors = new MuseumVisitors();
         try (Stream<String> lines = FileUtil.getVisitorsFileLines()) {
             List<VisitationPeriod> maxVisitorsPeriod = museumVisitors.findMaxVisitorsPeriod(lines);
-            System.out.println(maxVisitorsPeriod.toString());
+            ConsoleUtil.printResults(maxVisitorsPeriod);
         } catch (URISyntaxException | IOException | NullPointerException e) {
-            e.printStackTrace();
+            ConsoleUtil.printFailure(e);
         }
     }
 

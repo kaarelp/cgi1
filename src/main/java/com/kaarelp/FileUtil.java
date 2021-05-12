@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class FileUtil {
 
-    private static final String VISITORS_FILE = "kylastusajad.txt";
+    public static final String VISITORS_FILE = "kylastusajad.txt";
 
     public static Stream<String> getVisitorsFileLines() throws URISyntaxException, IOException {
         URL url = FileUtil.class.getClassLoader().getResource(VISITORS_FILE);
