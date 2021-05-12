@@ -11,20 +11,23 @@ public class MuseumVisitors {
     public static void main(String[] args) {
         MuseumVisitors museumVisitors = new MuseumVisitors();
         try (Stream<String> lines = FileUtil.getVisitorsFileLines()) {
-            List<Map.Entry<Integer, Integer>> maxVisitorsPeriod = museumVisitors.findMaxVisitorsPeriod(lines);
+            List<VisitationPeriod> maxVisitorsPeriod = museumVisitors.findMaxVisitorsPeriod(lines);
             System.out.println(maxVisitorsPeriod.toString());
         } catch (URISyntaxException | IOException | NullPointerException e) {
             e.printStackTrace();
         }
     }
 
-    private List<Map.Entry<Integer, Integer>> findMaxVisitorsPeriod(Stream<String> visitations) {
-        Map<Integer, Integer> mappedVisitations = toMap(visitations);
-        int maxSimultaneousVisitors = getMaxSimultaneousVisitors(mappedVisitations);
-        return getVisitationPeriodOf(mappedVisitations, maxSimultaneousVisitors);
+    public List<VisitationPeriod> findMaxVisitorsPeriod(Stream<String> visitationsStream) {
+        if (visitationsStream == null) return Collections.emptyList();
+        Map<Integer, Integer> visitationsMap = read(visitationsStream);
+        if (visitationsMap.isEmpty()) return Collections.emptyList();
+        int maxSimultaneousVisitors = getMaxSimultaneousVisitors(visitationsMap);
+        List<Map.Entry<Integer, Integer>> period = getVisitationPeriodOf(visitationsMap, maxSimultaneousVisitors);
+        return mapTo(period);
     }
 
-    private Map<Integer, Integer> toMap(Stream<String> visitations) {
+    private Map<Integer, Integer> read(Stream<String> visitations) {
         Map<Integer, Integer> map = new HashMap<>();
         visitations.forEach(s -> {
             String[] startAndEndTimestamps = s.split(",");
@@ -53,9 +56,33 @@ public class MuseumVisitors {
         return visitations.values().stream().max(Integer::compareTo).orElse(0);
     }
 
-    private List<Map.Entry<Integer, Integer>> getVisitationPeriodOf(Map<Integer, Integer> visitations, int nrOfSimultaneousVisitors) {
+    private List<Map.Entry<Integer, Integer>> getVisitationPeriodOf(Map<Integer, Integer> visitations,
+                                                                    int nrOfSimultaneousVisitors) {
          return visitations.entrySet().stream()
                  .filter(entry -> entry.getValue().equals(nrOfSimultaneousVisitors))
                  .collect(Collectors.toList());
+    }
+
+    private List<VisitationPeriod> mapTo(List<Map.Entry<Integer, Integer>> visitationPeriodMinutes) {
+        List<Map.Entry<Integer, Integer>> sorted = sortByKeys(visitationPeriodMinutes);
+        List<VisitationPeriod> result = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : sorted) {
+            VisitationPeriod period = new VisitationPeriod(entry);
+            if (result.isEmpty()) {
+                result.add(period);
+                continue;
+            }
+            VisitationPeriod previous = result.get(result.size() - 1);
+            if (period.isAdjacentTo(previous)) {
+                previous.add(period);
+            } else {
+                result.add(period);
+            }
+        }
+        return result;
+    }
+
+    private List<Map.Entry<Integer, Integer>> sortByKeys(List<Map.Entry<Integer, Integer>> unsorted) {
+        return unsorted.stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
     }
 }
