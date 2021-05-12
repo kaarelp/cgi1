@@ -21,6 +21,7 @@ public class MuseumVisitors {
     public List<VisitationPeriod> findMaxVisitorsPeriod(Stream<String> visitationsStream) {
         if (visitationsStream == null) return Collections.emptyList();
         Map<Integer, Integer> visitationsMap = read(visitationsStream);
+        System.out.println(">>>" + visitationsMap.toString());
         if (visitationsMap.isEmpty()) return Collections.emptyList();
         int maxSimultaneousVisitors = getMaxSimultaneousVisitors(visitationsMap);
         List<Map.Entry<Integer, Integer>> period = getVisitationPeriodOf(visitationsMap, maxSimultaneousVisitors);
@@ -38,7 +39,7 @@ public class MuseumVisitors {
         int startMinute = toMinutes(startAndEndTimestamps[0]);
         int endMinute = toMinutes(startAndEndTimestamps[1]);
 
-        for (int i = startMinute; i <= endMinute; i++) {
+        for (int i = startMinute; i < endMinute; i++) {
             if (map.containsKey(i)) {
                 int visitationsDuringThisMinute = map.get(i);
                 map.put(i, visitationsDuringThisMinute + 1);
