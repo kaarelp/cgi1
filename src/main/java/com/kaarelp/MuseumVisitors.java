@@ -37,7 +37,7 @@ public class MuseumVisitors {
         int startMinute = getStartMinute(timestamp);
         int endMinute = getEndMinute(timestamp);
 
-        for (int i = startMinute; i < endMinute; i++) {
+        for (int i = startMinute; i <= endMinute; i++) {
             if (map.containsKey(i)) {
                 int visitationsDuringThisMinute = map.get(i);
                 map.put(i, visitationsDuringThisMinute + 1);
