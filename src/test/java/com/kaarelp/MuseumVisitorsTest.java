@@ -39,7 +39,7 @@ class MuseumVisitorsTest {
     void findMaxVisitorsPeriod_singleVisitation_found() {
         MuseumVisitors m = new MuseumVisitors();
 
-        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(singleVisitationStream());
+        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(Stream.of("00:00,00:05"));
 
         assertThat(actual, is(not(empty())));
         assertThat(actual, hasSize(1));
@@ -53,7 +53,7 @@ class MuseumVisitorsTest {
     void findMaxVisitorsPeriod_singleVisitationCaseMinuteOverflow_found() {
         MuseumVisitors m = new MuseumVisitors();
 
-        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(singleVisitationStreamCaseMinuteOverflow());
+        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(Stream.of("00:00,01:00"));
 
         assertThat(actual, is(not(empty())));
         assertThat(actual, hasSize(1));
@@ -67,7 +67,7 @@ class MuseumVisitorsTest {
     void findMaxVisitorsPeriod_twoLeftPartiallyOverlappingVisitations_found() {
         MuseumVisitors m = new MuseumVisitors();
 
-        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(twoLeftPartiallyOverlappingVisitationsStream());
+        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(Stream.of("13:00,13:05", "13:00,13:03"));
 
         assertThat(actual, is(not(empty())));
         assertThat(actual, hasSize(1));
@@ -77,16 +77,35 @@ class MuseumVisitorsTest {
         assertEquals(2, found.getNrSimultaneousOfVisitors());
     }
 
-    private Stream<String> singleVisitationStream() {
-        return Stream.of("00:00,00:05");
+    @Test
+    void findMaxVisitorsPeriod_twoRightPartiallyOverlappingVisitations_found() {
+        MuseumVisitors m = new MuseumVisitors();
+
+        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(Stream.of("13:00,13:05", "13:03,13:05"));
+
+        assertThat(actual, is(not(empty())));
+        assertThat(actual, hasSize(1));
+        VisitationPeriod found = actual.get(0);
+        assertEquals("13:03", found.getStartingMinuteIn24hFormat());
+        assertEquals("13:05", found.getEndingMinuteIn24hFormat());
+        assertEquals(2, found.getNrSimultaneousOfVisitors());
     }
 
-    private Stream<String> singleVisitationStreamCaseMinuteOverflow() {
-        return Stream.of("00:00,01:00");
-    }
+    @Test
+    void findMaxVisitorsPeriod_twoMaxVisitationPeriods_found() {
+        MuseumVisitors m = new MuseumVisitors();
 
-    private Stream<String> twoLeftPartiallyOverlappingVisitationsStream() {
-        return Stream.of("13:00,13:05", "13:00,13:03");
-    }
+        List<VisitationPeriod> actual = m.findMaxVisitorsPeriod(Stream.of("00:00,00:05", "00:10,00:15", "00:00,00:15"));
 
+        assertThat(actual, is(not(empty())));
+        assertThat(actual, hasSize(2));
+        VisitationPeriod found1 = actual.get(0);
+        VisitationPeriod found2 = actual.get(1);
+        assertEquals("00:00", found1.getStartingMinuteIn24hFormat());
+        assertEquals("00:05", found1.getEndingMinuteIn24hFormat());
+        assertEquals(2, found1.getNrSimultaneousOfVisitors());
+        assertEquals("00:10", found2.getStartingMinuteIn24hFormat());
+        assertEquals("00:15", found2.getEndingMinuteIn24hFormat());
+        assertEquals(2, found2.getNrSimultaneousOfVisitors());
+    }
 }
