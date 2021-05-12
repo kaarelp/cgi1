@@ -30,18 +30,16 @@ public class MuseumVisitors {
     private Map<Integer, Integer> read(Stream<String> visitations) {
         Map<Integer, Integer> map = new HashMap<>();
         visitations.forEach(s -> {
-            String[] startAndEndTimestamps = s.split(",");
-            addVisitationToMap(map, toMinutes(startAndEndTimestamps[0]), toMinutes(startAndEndTimestamps[1]));
+            addVisitationToMap(map, s);
         });
         return map;
     }
 
-    private int toMinutes(String timestamp) {
-        String[] hoursAndMinutes = timestamp.split(":");
-        return Integer.parseInt(hoursAndMinutes[0]) * 60 + Integer.parseInt(hoursAndMinutes[1]);
-    }
+    private void addVisitationToMap(Map<Integer, Integer> map, String timestamp) {
+        String[] startAndEndTimestamps = timestamp.split(",");
+        int startMinute = toMinutes(startAndEndTimestamps[0]);
+        int endMinute = toMinutes(startAndEndTimestamps[1]);
 
-    private void addVisitationToMap(Map<Integer, Integer> map, int startMinute, int endMinute) {
         for (int i = startMinute; i <= endMinute; i++) {
             if (map.containsKey(i)) {
                 int visitationsDuringThisMinute = map.get(i);
@@ -50,6 +48,11 @@ public class MuseumVisitors {
                 map.put(i, 1);
             }
         }
+    }
+
+    private int toMinutes(String timestamp) {
+        String[] hoursAndMinutes = timestamp.split(":");
+        return Integer.parseInt(hoursAndMinutes[0]) * 60 + Integer.parseInt(hoursAndMinutes[1]);
     }
 
     private int getMaxSimultaneousVisitors(Map<Integer, Integer> visitations) {
