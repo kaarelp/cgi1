@@ -29,9 +29,7 @@ public class MuseumVisitors {
 
     private Map<Integer, Integer> read(Stream<String> visitations) {
         Map<Integer, Integer> map = new HashMap<>();
-        visitations.forEach(s -> {
-            addVisitationToMap(map, s);
-        });
+        visitations.forEach(s -> addVisitationToMap(map, s));
         return map;
     }
 
