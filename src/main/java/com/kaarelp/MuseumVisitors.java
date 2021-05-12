@@ -35,18 +35,32 @@ public class MuseumVisitors {
     }
 
     private void addVisitationToMap(Map<Integer, Integer> map, String timestamp) {
-        String[] startAndEndTimestamps = timestamp.split(",");
         int startMinute = toMinutes(startAndEndTimestamps[0]);
         int endMinute = toMinutes(startAndEndTimestamps[1]);
 
         for (int i = startMinute; i < endMinute; i++) {
             if (map.containsKey(i)) {
                 int visitationsDuringThisMinute = map.get(i);
-                map.put(i, visitationsDuringThisMinute + 1);
+                int x = visitationsDuringThisMinute;
+                x++;
+                map.put(i, x);
             } else {
                 map.put(i, 1);
             }
         }
+    }
+
+    private int getStartMinute(String timestamp) {
+        String startTimestamp = timestamp.split(",")[0];
+        String[] hoursAndMinutes = startTimestamp.split(":");
+        return Integer.parseInt(hoursAndMinutes[0]) * 60 + Integer.parseInt(hoursAndMinutes[1]);
+    }
+
+    private int getEndMinute(String timestamp) {
+        String endTimestamp = timestamp.split(",")[1];
+        String[] hoursAndMinutes = endTimestamp.split(":");
+        // -1 to get the correct index. 00:00,00:03 translates to minute indexes: 0, 1, 2
+        return Integer.parseInt(hoursAndMinutes[0]) * 60 + Integer.parseInt(hoursAndMinutes[1]) - 1;
     }
 
     private int toMinutes(String timestamp) {
