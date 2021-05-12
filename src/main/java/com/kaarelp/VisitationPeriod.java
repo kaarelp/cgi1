@@ -66,10 +66,10 @@ public class VisitationPeriod {
     }
 
     public String getStartingMinuteIn24hFormat() {
-        return startingMinute / 60 + ":" + startingMinute % 60;
+        return String.format("%02d", startingMinute / 60) + ":" + String.format("%02d", startingMinute % 60);
     }
 
     public String getEndingMinuteIn24hFormat() {
-        return endingMinute / 60 + ":" + endingMinute % 60;
+        return String.format("%02d", endingMinute / 60) + ":" + String.format("%02d", endingMinute % 60);
     }
 }
