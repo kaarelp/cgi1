@@ -21,7 +21,6 @@ public class MuseumVisitors {
     public List<VisitationPeriod> findMaxVisitorsPeriod(Stream<String> visitationsStream) {
         if (visitationsStream == null) return Collections.emptyList();
         Map<Integer, Integer> visitationsMap = read(visitationsStream);
-        System.out.println(">>>" + visitationsMap.toString());
         if (visitationsMap.isEmpty()) return Collections.emptyList();
         int maxSimultaneousVisitors = getMaxSimultaneousVisitors(visitationsMap);
         List<Map.Entry<Integer, Integer>> period = getVisitationPeriodOf(visitationsMap, maxSimultaneousVisitors);
@@ -35,15 +34,13 @@ public class MuseumVisitors {
     }
 
     private void addVisitationToMap(Map<Integer, Integer> map, String timestamp) {
-        int startMinute = toMinutes(startAndEndTimestamps[0]);
-        int endMinute = toMinutes(startAndEndTimestamps[1]);
+        int startMinute = getStartMinute(timestamp);
+        int endMinute = getEndMinute(timestamp);
 
         for (int i = startMinute; i < endMinute; i++) {
             if (map.containsKey(i)) {
                 int visitationsDuringThisMinute = map.get(i);
-                int x = visitationsDuringThisMinute;
-                x++;
-                map.put(i, x);
+                map.put(i, visitationsDuringThisMinute + 1);
             } else {
                 map.put(i, 1);
             }
@@ -61,11 +58,6 @@ public class MuseumVisitors {
         String[] hoursAndMinutes = endTimestamp.split(":");
         // -1 to get the correct index. 00:00,00:03 translates to minute indexes: 0, 1, 2
         return Integer.parseInt(hoursAndMinutes[0]) * 60 + Integer.parseInt(hoursAndMinutes[1]) - 1;
-    }
-
-    private int toMinutes(String timestamp) {
-        String[] hoursAndMinutes = timestamp.split(":");
-        return Integer.parseInt(hoursAndMinutes[0]) * 60 + Integer.parseInt(hoursAndMinutes[1]);
     }
 
     private int getMaxSimultaneousVisitors(Map<Integer, Integer> visitations) {
